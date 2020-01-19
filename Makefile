@@ -10,15 +10,21 @@ test:
 test-watch:
 	${BIN}/karma start
 
+bbb:
+	@${BIN}/ts-node scripts/switchAdaptor.ts preact
+
 build:
 	@rm -rf lib
-	@${BIN}/tsc
-	@${BIN}/prettier "lib/**/*.[jt]s" --write --loglevel silent
+	@${BIN}/tsc --outDir lib/react
 	@cp {package.json,*.md} lib/react
 	@rsync --archive --prune-empty-dirs --exclude '*.ts' --relative src/./ lib/react
-	@cp -r lib/react lib/preact
 	@${BIN}/ts-node scripts/patchReact.ts
+	@${BIN}/ts-node scripts/switchAdaptor.ts preact
+	@${BIN}/tsc --outDir lib/preact
+	@cp {package.json,*.md} lib/preact
+	@rsync --archive --prune-empty-dirs --exclude '*.ts' --relative src/./ lib/preact
 	@${BIN}/ts-node scripts/patchPreact.ts
+	@${BIN}/ts-node scripts/switchAdaptor.ts react
 
 publish: build
 	cd lib/react && npm publish --access public

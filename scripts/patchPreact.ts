@@ -7,29 +7,19 @@ const writeFile = promisify(fs.writeFile)
 
 const rootPath = process.cwd()
 const packageJSONPath = resolve(rootPath, 'lib/preact/package.json')
-const adaptorPackageJSONPath = resolve(
-  rootPath,
-  'lib/preact/adaptor/package.json'
-)
 
-Promise.all([
-  readFile(packageJSONPath, 'utf8')
-    .then(JSON.parse)
-    .then(packageJSON =>
-      writeFile(
-        packageJSONPath,
-        JSON.stringify(patchPackageJSON(packageJSON), null, 2)
-      )
-    ),
-
-  writeFile(
-    adaptorPackageJSONPath,
-    JSON.stringify({ main: './preact' }, null, 2)
+readFile(packageJSONPath, 'utf8')
+  .then(JSON.parse)
+  .then(packageJSON =>
+    writeFile(
+      packageJSONPath,
+      JSON.stringify(patchPackageJSON(packageJSON), null, 2)
+    )
   )
-]).catch(err => {
-  console.error(err)
-  process.exit(1)
-})
+  .catch(err => {
+    console.error(err)
+    process.exit(1)
+  })
 
 type PackageJSON = {
   name: string
