@@ -13,7 +13,7 @@ import {
   notFoundLocation,
   Route,
   RouteRef,
-  UnpackRoute
+  InferRoute
 } from './core'
 
 export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
@@ -24,7 +24,7 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
   )
 
   type AppLocation = ReturnType<typeof resolveLocation>
-  type AppRoute = UnpackRoute<typeof appRoutes>
+  type AppRoute = InferRoute<typeof appRoutes>
   type Router = {
     location: AppLocation
     navigate: (ref: RouteRef<AppRoute>) => void
@@ -125,7 +125,14 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
     }
   }
 
-  return { useRouter, RouterContext, RouterLink, buildHref }
+  return {
+    useRouter,
+    RouterContext,
+    RouterLink,
+    resolveLocation,
+    refToLocation,
+    buildHref
+  }
 }
 
 function isEqual(objA: any, objB: any): boolean {

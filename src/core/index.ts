@@ -48,7 +48,17 @@ export type RouteRef<LinkRoute> = LinkRoute extends Route<
       : { params: RouteParams })
   : never
 
-export type UnpackRoute<Routes> = Routes extends (infer Route)[] ? Route : never
+export type InferRoute<Routes> = Routes extends (infer InferredRoute)[]
+  ? InferredRoute
+  : never
+
+export type InferRouteName<Routes> = Routes extends (infer InferredRoute)[]
+  ? InferredRoute extends Route<any, any, any>
+    ? InferredRoute['name']
+    : never
+  : never
+
+export type InferRouteRef<Routes> = RouteRef<InferRoute<Routes>>
 
 export const notFoundLocation: RouteNotFoundLocation<{}> = {
   name: '404',
@@ -72,7 +82,7 @@ export function route<RouteName extends string>(name: RouteName) {
 export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
   appRoutes: AppRoutes
 ) {
-  type AppRoute = UnpackRoute<AppRoutes>
+  type AppRoute = InferRoute<AppRoutes>
   type AppRouteMeta = AppRoute['meta']
 
   type AppLocation =
