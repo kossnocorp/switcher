@@ -28,11 +28,13 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
   type Router = {
     location: AppLocation
     navigate: (ref: RouteRef<AppRoute>) => void
+    buildHref: (ref: RouteRef<AppRoute>) => string
   }
 
   const RouterContext = createContext<Router>({
     location: notFoundLocation,
-    navigate: () => void 0
+    navigate: () => void 0,
+    buildHref: () => ''
   })
 
   function useRouter(initialURL: string): Router {
@@ -87,7 +89,7 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
       }
     }
 
-    return { location, navigate }
+    return { location, navigate, buildHref }
   }
 
   function RouterLink<
@@ -123,7 +125,7 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
     }
   }
 
-  return { useRouter, RouterContext, RouterLink }
+  return { useRouter, RouterContext, RouterLink, buildHref }
 }
 
 function isEqual(objA: any, objB: any): boolean {
