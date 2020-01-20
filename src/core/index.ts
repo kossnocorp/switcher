@@ -59,8 +59,10 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any>>>(
   type AppLocation = RouteLocation<AppRoute> | RouteNotFoundLocation
 
   function resolveLocation(url: string): AppLocation {
-    const { pathname, searchParams, hash } = new URL(url)
+    const { pathname, searchParams, hash: unprocessedHash } = new URL(url)
     const query = searchParamsToQuery(searchParams)
+    // Remove leading #
+    const hash = unprocessedHash.slice(1)
 
     for (let index = 0; index < appRoutes.length; index++) {
       const route = appRoutes[index]
@@ -163,7 +165,7 @@ function searchParamsToQuery(params: URLSearchParams) {
 }
 
 function parseSearchParamValue(value: string) {
-  if (value === 'true' || value === '') {
+  if (value === 'true') {
     return true
   } else if (value === 'false') {
     return false
