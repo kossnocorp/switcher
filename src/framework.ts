@@ -16,7 +16,7 @@ import {
   UnpackRoute
 } from './core'
 
-export function createRouter<AppRoutes extends Array<Route<any, any>>>(
+export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
   appRoutes: AppRoutes
 ) {
   const { resolveLocation, refToLocation, buildHref } = createRouterCore(

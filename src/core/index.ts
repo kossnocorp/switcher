@@ -1,18 +1,30 @@
-export type Route<RouteName, _RouteParams> = { name: RouteName; path: string }
+export type Route<RouteName, _RouteParams, RouteMeta> = {
+  name: RouteName
+  path: string
+  meta: RouteMeta
+}
 
-export type RouteLocation<LocationRoute> = LocationRoute extends Route<
+export type RouteLocation<
+  LocationRoute,
+  LocationMeta
+> = LocationRoute extends Route<
   infer RouteName,
-  infer RouteParams
+  infer RouteParams,
+  infer _RouteMeta
 >
   ? {
       name: RouteName
       params: RouteParams
       query: RouteQuery
       hash: string
+      meta: LocationMeta
     }
   : never
 
-export type RouteNotFoundLocation = RouteLocation<Route<'404', undefined>>
+export type RouteNotFoundLocation<NotFoundMeta> = RouteLocation<
+  Route<'404', undefined, NotFoundMeta>,
+  NotFoundMeta
+>
 
 export type RouteQuery = {
   [key: string]: string | boolean | number
@@ -24,7 +36,8 @@ export type RouteParams = {
 
 export type RouteRef<LinkRoute> = LinkRoute extends Route<
   infer RouteName,
-  infer RouteParams
+  infer RouteParams,
+  infer _RouteMeta
 >
   ? {
       name: RouteName
@@ -37,26 +50,34 @@ export type RouteRef<LinkRoute> = LinkRoute extends Route<
 
 export type UnpackRoute<Routes> = Routes extends (infer Route)[] ? Route : never
 
-export const notFoundLocation: RouteNotFoundLocation = {
+export const notFoundLocation: RouteNotFoundLocation<{}> = {
   name: '404',
   params: undefined,
   query: {},
-  hash: ''
+  hash: '',
+  meta: {}
 }
 
-export function route<RouteName extends string = '', RouteParams = undefined>(
-  name: RouteName,
-  path: string
-): Route<RouteName, RouteParams> {
-  return { name, path }
+export function route<RouteName extends string>(name: RouteName) {
+  return <RouteParams = undefined>(path: string) => <RouteMeta = {}>(
+    meta?: RouteMeta
+  ) =>
+    ({ name, path, meta: meta || {} } as Route<
+      RouteName,
+      RouteParams,
+      RouteMeta
+    >)
 }
 
-export function createRouterCore<AppRoutes extends Array<Route<any, any>>>(
+export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
   appRoutes: AppRoutes
 ) {
   type AppRoute = UnpackRoute<AppRoutes>
+  type AppRouteMeta = AppRoute['meta']
 
-  type AppLocation = RouteLocation<AppRoute> | RouteNotFoundLocation
+  type AppLocation =
+    | RouteLocation<AppRoute, AppRouteMeta>
+    | RouteNotFoundLocation<AppRouteMeta>
 
   function resolveLocation(url: string): AppLocation {
     const { pathname, searchParams, hash: unprocessedHash } = new URL(url)
@@ -66,7 +87,7 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any>>>(
 
     for (let index = 0; index < appRoutes.length; index++) {
       const route = appRoutes[index]
-      const { name, path } = route
+      const { name, path, meta } = route
       const regExp = pathToRegExp(path)
       const captures = pathname.match(regExp)
 
@@ -76,7 +97,8 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any>>>(
           name,
           query,
           params,
-          hash
+          hash,
+          meta
         } as AppLocation
       }
     }
@@ -85,18 +107,27 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any>>>(
       name: '404',
       params: undefined,
       query,
-      hash
-    }
+      hash,
+      meta: {}
+    } as AppLocation
   }
 
   function refToLocation(ref: RouteRef<AppRoute>): AppLocation {
     const { name, params, query, hash } = ref
-    return {
-      name,
-      query,
-      params,
-      hash
-    } as AppLocation
+    const route = appRoutes.find(route => route.name === name)
+
+    if (route) {
+      const { meta } = route
+      return {
+        name,
+        query,
+        params,
+        hash,
+        meta
+      } as AppLocation
+    } else {
+      return notFoundLocation
+    }
   }
 
   function buildHref(ref: RouteRef<AppRoute>) {

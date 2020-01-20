@@ -4,18 +4,22 @@ import { createRouterCore, route } from '.'
 describe('core', () => {
   describe('route', () => {
     it('allows adding meta data', () => {
-      const result = route('home', '/')
+      const result = route('home')('/')()
       assert.deepEqual(result, {
         name: 'home',
-        path: '/'
+        path: '/',
+        meta: {}
       })
     })
   })
 
   describe('createRouterCore', () => {
     const routes = [
-      route('home', '/'),
-      route<'project', { projectId: string }>('project', '/projects/:projectId')
+      route('home')('/')(),
+
+      route('project')<{ projectId: string }>('/projects/:projectId')({
+        auth: true
+      })
     ]
     const { resolveLocation, refToLocation, buildHref } = createRouterCore(
       routes
@@ -30,7 +34,8 @@ describe('core', () => {
           name: 'project',
           params: { projectId: 'qwe' },
           query: { qwe: 'rty', asd: true, zxc: 123 },
-          hash: '456'
+          hash: '456',
+          meta: { auth: true }
         })
       })
     })
@@ -47,7 +52,8 @@ describe('core', () => {
           name: 'project',
           params: { projectId: 'qwe' },
           query: { qwe: 'rty', asd: true, zxc: 123 },
-          hash: '456'
+          hash: '456',
+          meta: { auth: true }
         })
       })
     })
