@@ -6,6 +6,7 @@ import {
   ReactElement,
   useContext,
   useEffect,
+  useRef,
   useState
 } from './adaptor'
 import {
@@ -15,7 +16,6 @@ import {
   Route,
   RouteRef
 } from './core'
-import { useRef } from 'react'
 
 export type RouterOptions = {
   scrollOnMissingHash?: 'top' | 'preserve'

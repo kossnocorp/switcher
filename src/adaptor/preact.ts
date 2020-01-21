@@ -6,4 +6,4 @@ export {
   createContext,
   createElement
 } from 'preact'
-export { useContext, useEffect, useState } from 'preact/hooks'
+export { useContext, useEffect, useRef, useState } from 'preact/hooks'

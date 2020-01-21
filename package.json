@@ -1,6 +1,6 @@
 {
   "name": "@switcher/react",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Type-safe TypeScript-first minimalistic router for React & Preact apps",
   "keywords": [
     "React",
