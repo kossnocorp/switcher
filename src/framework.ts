@@ -25,6 +25,9 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
   appRoutes: AppRoutes,
   options: RouterOptions = {}
 ) {
+  // Default options
+  options.scrollOnMissingHash = options.scrollOnMissingHash || 'top'
+
   const { resolveLocation, refToLocation, buildHref } = createRouterCore(
     appRoutes
   )
@@ -71,7 +74,7 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
         if (scrollToEl) {
           window.scroll(0, scrollToEl.offsetTop)
         } else if (
-          options.scrollOnMissingHash !== 'preserve' ||
+          options.scrollOnMissingHash === 'top' &&
           isSamePage(location, prevLocation.current)
         ) {
           window.scroll(0, 0)
