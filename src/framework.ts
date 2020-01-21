@@ -99,51 +99,77 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
     return { location, navigate, buildHref }
   }
 
-  function RouterLink<ExtraLinkComponentProps = {}>({
+  function RouterLink<
+    ExtraLinkComponentProps extends { [key: string]: any } = {}
+  >({
     to,
+    target,
+    rel,
+    mode = 'anchor',
     children,
     component,
+    onClick: customOnClick,
     ...componentProps
   }: {
     to: AppRef
+    target?: string
+    rel?: string
+    mode?: 'anchor' | 'block'
     children?: ComponentChildren
     component?: ReactElement
+    onClick?: (e: MouseEvent) => any
   } & ExtraLinkComponentProps) {
     const { navigate } = useContext(RouterContext)
     const href = buildHref(to)
-    const allComponentProps = Object.assign(
-      {
-        href,
-        onClick: (e: MouseEvent) => {
-          e.preventDefault()
 
-          /*
-                    if (mode !== 'block' && (e.metaKey || e.ctrlKey || !props.to)) return
-          e.stopPropagation()
-          e.preventDefault()
-          if (
-            props.target === '_blank' ||
-            (mode === 'block' && (e.metaKey || e.ctrlKey))
-          ) {
-            const href = hrefFor(props.to)
-            const win = window.open(href, '_blank')
-            win && win.focus()
-          } else {
-            navigate(props.to)
-          }
-          onClick && onClick(e)
-          */
+    const onClick = (e: MouseEvent) => {
+      // Handle the custom click handler
+      customOnClick && customOnClick(e)
 
-          navigate(to)
+      // If default behavior got prevented by the custom click handler or
+      // the mode is "anchor" (default) and user clicks the link with
+      // the command or control key then use default browser behavior.
+      if (e.defaultPrevented || (mode !== 'block' && (e.metaKey || e.ctrlKey)))
+        return
+
+      // Otherwise, prevent the default behavior and stop propogation.
+      e.preventDefault()
+      e.stopPropagation()
+
+      // When the target attribute is "_blank" or the mode is "block" and
+      // user clicks the link with the command or control key
+      // then open the link in a new window.
+      if (
+        componentProps.target === '_blank' ||
+        (mode === 'block' && (e.metaKey || e.ctrlKey))
+      ) {
+        // Preserve noreferrer and noopener
+        const features: string[] = []
+        if (typeof componentProps.rel === 'string') {
+          if (componentProps.rel.includes('noreferrer'))
+            features.push('noreferrer')
+          if (componentProps.rel.includes('noopener')) features.push('noopener')
         }
-      },
-      componentProps
-    )
+        const win = window.open(href, '_blank', features.join(','))
+        win && win.focus()
+      } else {
+        navigate(to)
+      }
+    }
+
+    const props =
+      mode === 'anchor'
+        ? Object.assign({ onClick, href, target, rel }, componentProps)
+        : Object.assign({ onClick }, componentProps)
 
     if (component) {
-      return cloneElement(component, allComponentProps, children)
+      return cloneElement(component, props, children)
     } else {
-      return createElement('a', allComponentProps, children)
+      if (mode === 'anchor') {
+        return createElement('a', props, children)
+      } else {
+        return createElement('div', props, children)
+      }
     }
   }
 
