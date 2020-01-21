@@ -10,14 +10,20 @@ import {
 } from './adaptor'
 import {
   createRouterCore,
+  InferRoute,
   notFoundLocation,
   Route,
-  RouteRef,
-  InferRoute
+  RouteRef
 } from './core'
+import { useRef } from 'react'
+
+export type RouterOptions = {
+  scrollOnMissingHash?: 'top' | 'preserve'
+}
 
 export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
-  appRoutes: AppRoutes
+  appRoutes: AppRoutes,
+  options: RouterOptions = {}
 ) {
   const { resolveLocation, refToLocation, buildHref } = createRouterCore(
     appRoutes
@@ -25,10 +31,11 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
 
   type AppLocation = ReturnType<typeof resolveLocation>
   type AppRoute = InferRoute<typeof appRoutes>
+  type AppRef = RouteRef<AppRoute>
   type Router = {
     location: AppLocation
-    navigate: (ref: RouteRef<AppRoute>) => void
-    buildHref: (ref: RouteRef<AppRoute>) => string
+    navigate: (ref: AppRef) => void
+    buildHref: (ref: AppRef) => string
   }
 
   const RouterContext = createContext<Router>({
@@ -56,32 +63,33 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
 
     // After location change scroll to the element with id equal hash
     // or the top of the page
+    const prevLocation = useRef(initialLocation)
     useEffect(() => {
       if (location !== initialLocation) {
         const scrollToEl =
           (location.hash && document.getElementById(location.hash)) || undefined
-        window.scroll(0, scrollToEl?.offsetTop || 0)
+        if (scrollToEl) {
+          window.scroll(0, scrollToEl.offsetTop)
+        } else if (
+          options.scrollOnMissingHash !== 'preserve' ||
+          isSamePage(location, prevLocation.current)
+        ) {
+          window.scroll(0, 0)
+        }
       }
+      prevLocation.current = location
     }, [location])
 
-    function navigate(ref: RouteRef<AppRoute>) {
+    function navigate(ref: AppRef) {
       const currentLocation = resolveLocation(window.location.href)
       const newLocation = refToLocation(ref)
 
-      if (
-        currentLocation.name === ref.name &&
-        isEqual(currentLocation.params, ref.params) &&
-        isEqual(currentLocation.query, ref.query)
-      ) {
-        // The current and reference locations are the same
-
+      if (isSamePage(currentLocation, ref)) {
         // If the hash is present and the object with given id is found
         // then scroll to it
         const scrollToEl = ref.hash && document.getElementById(ref.hash)
         if (scrollToEl) window.scroll(0, scrollToEl.offsetTop)
       } else {
-        // The locations are different
-
         // Push state to history
         window.history.pushState(null, '', buildHref(ref))
         setLocation(newLocation)
@@ -91,16 +99,13 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
     return { location, navigate, buildHref }
   }
 
-  function RouterLink<
-    LinkRoute extends AppRoute,
-    ExtraLinkComponentProps = {}
-  >({
+  function RouterLink<ExtraLinkComponentProps = {}>({
     to,
     children,
     component,
     ...componentProps
   }: {
-    to: RouteRef<LinkRoute>
+    to: AppRef
     children?: ComponentChildren
     component?: ReactElement
   } & ExtraLinkComponentProps) {
@@ -140,6 +145,17 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
     } else {
       return createElement('a', allComponentProps, children)
     }
+  }
+
+  function isSamePage(
+    locationA: AppLocation | AppRef,
+    locationB: AppLocation | AppRef
+  ) {
+    return (
+      locationA.name === locationB.name &&
+      isEqual(locationA.params, locationB.params) &&
+      isEqual(locationA.query, locationB.query)
+    )
   }
 
   return {
