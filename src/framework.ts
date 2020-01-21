@@ -83,7 +83,6 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
         // The locations are different
 
         // Push state to history
-        console.log('Switcher: push state')
         window.history.pushState(null, '', buildHref(ref))
         setLocation(newLocation)
       }
@@ -112,6 +111,24 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
         href,
         onClick: (e: MouseEvent) => {
           e.preventDefault()
+
+          /*
+                    if (mode !== 'block' && (e.metaKey || e.ctrlKey || !props.to)) return
+          e.stopPropagation()
+          e.preventDefault()
+          if (
+            props.target === '_blank' ||
+            (mode === 'block' && (e.metaKey || e.ctrlKey))
+          ) {
+            const href = hrefFor(props.to)
+            const win = window.open(href, '_blank')
+            win && win.focus()
+          } else {
+            navigate(props.to)
+          }
+          onClick && onClick(e)
+          */
+
           navigate(to)
         }
       },
