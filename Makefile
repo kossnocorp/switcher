@@ -10,9 +10,6 @@ test:
 test-watch:
 	${BIN}/karma start
 
-bbb:
-	@${BIN}/ts-node scripts/switchAdaptor.ts preact
-
 build:
 	@rm -rf lib
 	@${BIN}/tsc --outDir lib/react
