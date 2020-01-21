@@ -153,8 +153,7 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
             features.push('noreferrer')
           if (componentProps.rel.includes('noopener')) features.push('noopener')
         }
-        const win = window.open(href, '_blank', features.join(','))
-        win && win.focus()
+        window.open(href, '_blank', features.join(','))
       } else {
         navigate(to)
       }
