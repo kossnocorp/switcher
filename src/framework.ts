@@ -167,11 +167,7 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
     if (component) {
       return cloneElement(component, props, children)
     } else {
-      if (mode === 'anchor') {
-        return createElement('a', props, children)
-      } else {
-        return createElement('div', props, children)
-      }
+      return createElement(mode === 'anchor' ? 'a' : 'div', props, children)
     }
   }
 
