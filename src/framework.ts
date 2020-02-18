@@ -1,57 +1,40 @@
-import {
-  cloneElement,
-  ComponentChildren,
-  createContext,
-  createElement,
-  ReactElement,
-  useContext,
-  useEffect,
-  useRef,
-  useState
-} from './adaptor'
-import {
-  createRouterCore,
-  InferRoute,
-  notFoundLocation,
-  Route,
-  RouteRef
-} from './core'
+import * as adaptor from './adaptor'
+import * as core from './core'
 
 export type RouterOptions = {
   scrollOnMissingHash?: 'top' | 'preserve'
 }
 
-export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
-  appRoutes: AppRoutes,
-  options: RouterOptions = {}
-) {
+export function createRouter<
+  AppRoutes extends Array<core.Route<any, any, any>>
+>(appRoutes: AppRoutes, options: RouterOptions = {}) {
   // Default options
   options.scrollOnMissingHash = options.scrollOnMissingHash || 'top'
 
-  const { resolveLocation, refToLocation, buildHref } = createRouterCore(
+  const { resolveLocation, refToLocation, buildHref } = core.createRouterCore(
     appRoutes
   )
 
   type AppLocation = ReturnType<typeof resolveLocation>
-  type AppRoute = InferRoute<typeof appRoutes>
-  type AppRef = RouteRef<AppRoute>
+  type AppRoute = core.InferRoute<typeof appRoutes>
+  type AppRef = core.RouteRef<AppRoute>
   type Router = {
     location: AppLocation
     navigate: (ref: AppRef) => void
     buildHref: (ref: AppRef) => string
   }
 
-  const RouterContext = createContext<Router>({
-    location: notFoundLocation,
+  const RouterContext = adaptor.createContext<Router>({
+    location: core.notFoundLocation,
     navigate: () => void 0,
     buildHref: () => ''
   })
 
   function useRouter(initialURL: string): Router {
     const initialLocation = resolveLocation(initialURL)
-    const [location, setLocation] = useState(initialLocation)
+    const [location, setLocation] = adaptor.useState(initialLocation)
 
-    useEffect(() => {
+    adaptor.useEffect(() => {
       // Are we in the browser environment?
       if (typeof window !== 'undefined') {
         const popStateListener = () => {
@@ -66,16 +49,22 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
 
     // After location change scroll to the element with id equal hash
     // or the top of the page
-    const prevLocation = useRef(initialLocation)
-    useEffect(() => {
+    const prevLocation = adaptor.useRef(initialLocation)
+    adaptor.useEffect(() => {
+      // Skip on initial run
       if (location !== initialLocation) {
         const scrollToEl =
           (location.hash && document.getElementById(location.hash)) || undefined
         if (scrollToEl) {
+          // If there's hash and element with id equal hash is found
+          // then scroll to it.
           window.scroll(0, scrollToEl.offsetTop)
         } else if (
-          options.scrollOnMissingHash === 'top' &&
-          isSamePage(location, prevLocation.current)
+          // If it's not the same page..
+          !isSamePage(location, prevLocation.current) ||
+          // ...or hash changed but the element is not found
+          (location.hash !== prevLocation.current.hash &&
+            options.scrollOnMissingHash === 'top')
         ) {
           window.scroll(0, 0)
         }
@@ -118,11 +107,11 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
     target?: string
     rel?: string
     mode?: 'anchor' | 'block'
-    children?: ComponentChildren
-    component?: ReactElement
+    children?: adaptor.ComponentChildren
+    component?: adaptor.ReactElement
     onClick?: (e: MouseEvent) => any
   } & ExtraLinkComponentProps) {
-    const { navigate } = useContext(RouterContext)
+    const { navigate } = adaptor.useContext(RouterContext)
     const href = buildHref(to)
 
     const onClick = (e: MouseEvent) => {
@@ -165,9 +154,13 @@ export function createRouter<AppRoutes extends Array<Route<any, any, any>>>(
         : Object.assign({ onClick }, componentProps)
 
     if (component) {
-      return cloneElement(component, props, children)
+      return adaptor.cloneElement(component, props, children)
     } else {
-      return createElement(mode === 'anchor' ? 'a' : 'div', props, children)
+      return adaptor.createElement(
+        mode === 'anchor' ? 'a' : 'div',
+        props,
+        children
+      )
     }
   }
 
