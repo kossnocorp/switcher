@@ -166,7 +166,12 @@ The function creates a route that later can be passed to `createRouter`.
 To define a simple route:
 
 ```ts
-route('home')('/')(),
+// When using with React:
+import { route } from '@switcher/react'
+// Or Preact:
+import { route } from '@switcher/preact'
+
+route('home')('/')()
 ```
 
 To define a route with params:
@@ -185,6 +190,56 @@ const routes = [
   route('projects')('/projects')({ auth: true })
 ]
 ```
+
+### `createRouter`
+
+The function accepts an array of routes created using `route` and router options and returns the router API with binded types.
+
+```ts
+// When using with React:
+import { route, createRouter } from '@switcher/react'
+// Or Preact:
+import { route, createRouter } from '@switcher/preact'
+
+const routes = [
+  route('login')('/login')({ auth: false }),
+  route('projects')('/projects')({ auth: true })
+]
+
+const routerAPI = createRouter(routes, {
+  // Configure "missing hash" behavior. When user clicks
+  // a hash link (#whatever), the router will try to find
+  // an element with id "whatever". When such element
+  // is missing:
+  // - 'top' (default): scroll to the top
+  // - 'preserve': keep the current scroll position
+  scrollOnMissingHash: 'top'
+})
+```
+
+#### `useRouter`
+
+TODO
+
+#### `RouterContext`
+
+TODO
+
+#### `RouterLink`
+
+TODO
+
+#### `resolveLocation`
+
+TODO
+
+#### `refToLocation`
+
+TODO
+
+#### `buildHref`
+
+TODO
 
 ## Changelog
 
