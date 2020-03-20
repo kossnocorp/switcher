@@ -228,7 +228,7 @@ const routerAPI = createRouter(routes, {
   // is missing:
   // - 'top' (default): scroll to the top
   // - 'preserve': keep the current scroll position
-  scrollOnMissingHash: 'top'
+  scrollOnMissingHash: 'preserve'
 })
 ```
 
@@ -244,6 +244,46 @@ The router API consist of these methods:
 See docs below for more information about each of those methods.
 
 #### `useRouter`
+
+React/Preact hook that initializes routing with the current URL and returns component-level router API.
+
+```tsx
+// When using with React:
+import React from 'react'
+// Or Preact:
+import { h } from 'preact'
+
+import { RouterContext, useRouter } from './router'
+
+export default function UI() {
+  // Initializes router with the initial URL
+  const componentRouterAPI = useRouter(location.href)
+
+  return (
+    <RouterContext.Provider value={componentRouterAPI}>
+      <Content />
+    </RouterContext.Provider>
+  )
+}
+```
+
+The component-level router API consist of these methods:
+
+- [`location`](#location)
+- [`navigate`](#navigate)
+- [`buildHref`](#buildHref)
+
+See docs below for more information about each of those methods.
+
+##### `location`
+
+TODO
+
+##### `navigate`
+
+TODO
+
+##### `buildHref`
 
 TODO
 
