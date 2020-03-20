@@ -403,7 +403,100 @@ export default function SignOutButton() {
 
 #### `RouterLink`
 
-TODO
+React/Preact component that renders `a` element with binded `href`, `onClick`, etc. props:
+
+```tsx
+// When using with React:
+import React from 'react'
+// Or Preact:
+import { h } from 'preact'
+
+import { RouterLink } from './router'
+import { Post } from './types'
+
+export default function PostsList({ posts }: { posts: Post[] }) {
+  return (
+    <ul>
+      {posts.map(post => (
+        <li key={post.ref.id}>
+          <RouterLink to={{ name: 'post', params: { postId: post.ref.id } }}>
+            {post.data.title}
+          </RouterLink>
+        </li>
+      ))}
+    </ul>
+  )
+}
+```
+
+You can customize the rendered component using `component` prop:
+
+```tsx
+// When using with React:
+import React, { ReactNode } from 'react'
+// On with Preact:
+import { h, ComponentChildren } from 'preact'
+
+import { RouterLink, AppRouteRef } from './router'
+import { ButtonProps, Button } from './Button'
+
+type Props = {
+  to: AppRouteRef
+  // When using with React:
+  children?: ReactNode[]
+  // On with Preact:
+  children?: ComponentChildren
+} & ButtonProps
+
+export default function ButtonLink({ to, children, ...props }: Props) {
+  return (
+    <RouterLink to={to} component={<Button tag="a" {...props} />}>
+      {children}
+    </RouterLink>
+  )
+}
+```
+
+The component also can render a block (`div` by default) instead of an anchor. Set `mode` prop to `block`:
+
+```tsx
+// When using with React:
+import React from 'react'
+// Or Preact:
+import { h } from 'preact'
+
+import { RouterLink } from './router'
+import { Post } from './types'
+
+export default function PostsList({ posts }: { posts: Post[] }) {
+  return (
+    <ul>
+      {posts.map(post => (
+        <RouterLink
+          mode="block"
+          tag="li"
+          to={{ name: 'post', params: { postId: post.ref.id } }}
+          key={post.ref.id}
+        >
+          <RouterLink to={{ name: 'post', params: { postId: post.ref.id } }}>
+            {post.data.title}
+          </RouterLink>
+
+          <ul>
+            {post.data.tags.map(tag => (
+              <li>
+                <RouterLink to={{ name: 'tag', params: { tag } }}>
+                  {tag}
+                </RouterLink>
+              </li>
+            ))}
+          </ul>
+        </RouterLink>
+      ))}
+    </ul>
+  )
+}
+```
 
 #### `resolveLocation`
 
