@@ -271,13 +271,13 @@ Right after initializing the router, pass the value to [`RouterContext`](#router
 
 The component-level router API consist of these methods:
 
-- [`location`](#location)
-- [`navigate`](#navigate)
-- [`buildHref`](#buildHref)
+- [`location`](#location-component-level-api)
+- [`navigate`](#navigate-component-level-api)
+- [`buildHref`](#buildhref-component-level-api)
 
 See docs below for more information about each of those methods.
 
-##### `location`
+##### `location` (component-level API)
 
 An object with the information about the current location:
 
@@ -312,7 +312,7 @@ If the current URL doesn't match to any routes:
 }
 ```
 
-##### `navigate`
+##### `navigate` (component-level API)
 
 The function performs navigation to the given route reference:
 
@@ -332,7 +332,7 @@ navigate({
 })
 ```
 
-##### `buildHref`
+##### `buildHref` (component-level API)
 
 The function builds href to the given route reference:
 
