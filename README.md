@@ -146,9 +146,10 @@ To navigate between the pages you could use `RouterLink` or `navigate` function 
 
 ```tsx
 // When using with React:
-import React from 'react'
+import React, { useContext } from 'react'
 // Or Preact:
 import { h } from 'preact'
+import { useContext } from 'preact/hooks'
 
 import { RouterContext, RouterLink } from '#app/router'
 import { signOut } from './auth'
@@ -354,7 +355,51 @@ navigate({
 
 #### `RouterContext`
 
-TODO
+React/Preact context that propagates the component-level API.
+
+First, initialize the router using [`useRouter`](#userouter) and pass the component-level API to `RouterContext.Provider`:
+
+```tsx
+// When using with React:
+import React from 'react'
+// Or Preact:
+import { h } from 'preact'
+
+import { RouterContext, useRouter } from './router'
+
+export default function UI() {
+  const componentRouterAPI = useRouter(location.href)
+
+  return (
+    <RouterContext.Provider value={componentRouterAPI}>
+      <Content />
+    </RouterContext.Provider>
+  )
+}
+```
+
+Then use `useContext` to access it:
+
+```tsx
+// When using with React:
+import React, { useContext } from 'react'
+// Or Preact:
+import { h } from 'preact'
+import { useContext } from 'preact/hooks'
+
+import { RouterContext } from '#app/router'
+import { signOut } from './auth'
+
+export default function SignOutButton() {
+  const { navigate } = useContext(RouterContext)
+
+  return (
+    <button onClick={() => signOut().then(() => navigate({ to: 'home' }))}>
+      Sign out
+    </button>
+  )
+}
+```
 
 #### `RouterLink`
 
