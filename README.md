@@ -314,11 +314,43 @@ If the current URL doesn't match to any routes:
 
 ##### `navigate`
 
-TODO
+The function performs navigation to the given route reference:
+
+```ts
+// Navigate to the home route
+navigate({ name: 'home' })
+
+// Navigate to route with params, query and hash
+navigate({
+  name: 'tutorial-chapter',
+  params: {
+    tutorialSlug: 'firebase-react-quick-start',
+    chapterSlug: 'firestore-queries'
+  },
+  query: { ref: 'twitter' },
+  hash: 'recap'
+})
+```
 
 ##### `buildHref`
 
-TODO
+The function builds href to the given route reference:
+
+```ts
+buildHref({ name: 'home' })
+//=> "/"
+
+navigate({
+  name: 'tutorial-chapter',
+  params: {
+    tutorialSlug: 'firebase-react-quick-start',
+    chapterSlug: 'firestore-queries'
+  },
+  query: { ref: 'twitter' },
+  hash: 'recap'
+})
+//=> "/tutorials/firebase-react-quick-start/chapters/firestore-queries?ref=twitter#recap"
+```
 
 #### `RouterContext`
 
