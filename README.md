@@ -37,6 +37,9 @@ Here's the router from [Fire Beast blog](https://firebeast.dev/) source code:
 > Note that even though the triple call `route('home')('/')()` looks alien, it allows TypeScript to infer dictionary of route names (`home`, `tutorials`, etc.), optional meta information and let you specify the params type.
 
 ```ts
+// When using with React:
+import { createRouter, InferRouteRef, route } from '@switcher/react'
+// Or Preact:
 import { createRouter, InferRouteRef, route } from '@switcher/preact'
 
 // Routes
@@ -71,7 +74,11 @@ export type AppRouteRef = InferRouteRef<typeof appRoutes>
 Then you need to initialize the router context in your root component and pass the initial URL:
 
 ```tsx
+// When using with React:
+import React from 'react'
+// Or Preact:
 import { h } from 'preact'
+
 import { RouterContext, useRouter } from './router'
 
 export default function UI() {
@@ -88,8 +95,12 @@ export default function UI() {
 Then you'll be able to access the router context in nested components and render the corresponding page:
 
 ```tsx
+// When using with React:
+import React, { useContext } from 'preact'
+// Or Preact:
 import { h } from 'preact'
 import { useContext } from 'preact/hooks'
+
 import { RouterContext } from './router'
 import HomePage from './HomePage'
 import PostPage from './PostPage'
@@ -134,7 +145,11 @@ export default function Content() {
 To navigate between the pages you could use `RouterLink` or `navigate` function from the router context:
 
 ```tsx
+// When using with React:
+import React from 'react'
+// Or Preact:
 import { h } from 'preact'
+
 import { RouterContext, RouterLink } from '#app/router'
 import { signOut } from './auth'
 
@@ -216,6 +231,17 @@ const routerAPI = createRouter(routes, {
   scrollOnMissingHash: 'top'
 })
 ```
+
+The router API consist of these methods:
+
+- [`useRouter`](#userouter)
+- [`RouterContext`](#routercontext)
+- [`RouterLink`](#routerlink)
+- [`resolveLocation`](#resolvelocation)
+- [`refToLocation`](#reftolocation)
+- [`buildHref`](#buildhref)
+
+See docs below for more information about each of those methods.
 
 #### `useRouter`
 
