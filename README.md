@@ -157,6 +157,35 @@ export default function Navigation() {
 }
 ```
 
+## API
+
+### `route`
+
+The function creates a route that later can be passed to `createRouter`.
+
+To define a simple route:
+
+```ts
+route('home')('/')(),
+```
+
+To define a route with params:
+
+```ts
+route('tutorial-chapter')<{ tutorialSlug: string; chapterSlug: string }>(
+  '/tutorials/:tutorialSlug/chapters/:chapterSlug'
+)()
+```
+
+The `route` also allows to pass meta information:
+
+```ts
+const routes = [
+  route('login')('/login')({ auth: false }),
+  route('projects')('/projects')({ auth: true })
+]
+```
+
 ## Changelog
 
 See [the changelog](./CHANGELOG.md).
