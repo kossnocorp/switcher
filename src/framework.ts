@@ -98,6 +98,7 @@ export function createRouter<
     target,
     rel,
     mode = 'anchor',
+    tag,
     children,
     component,
     onClick: customOnClick,
@@ -107,12 +108,14 @@ export function createRouter<
     target?: string
     rel?: string
     mode?: 'anchor' | 'block'
+    tag?: string
     children?: adaptor.ComponentChildren
     component?: adaptor.ReactElement
     onClick?: (e: MouseEvent) => any
   } & ExtraLinkComponentProps) {
     const { navigate } = adaptor.useContext(RouterContext)
     const href = buildHref(to)
+    const componentTag = tag || mode === 'anchor' ? 'a' : 'div'
 
     const onClick = (e: MouseEvent) => {
       // Handle the custom click handler
@@ -156,11 +159,7 @@ export function createRouter<
     if (component) {
       return adaptor.cloneElement(component, props, children)
     } else {
-      return adaptor.createElement(
-        mode === 'anchor' ? 'a' : 'div',
-        props,
-        children
-      )
+      return adaptor.createElement(componentTag, props, children)
     }
   }
 
