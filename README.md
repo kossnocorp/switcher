@@ -267,6 +267,8 @@ export default function UI() {
 }
 ```
 
+Right after initializing the router, pass the value to [`RouterContext`](#routercontext), to make it available in nested components.
+
 The component-level router API consist of these methods:
 
 - [`location`](#location)
@@ -277,7 +279,38 @@ See docs below for more information about each of those methods.
 
 ##### `location`
 
-TODO
+An object with the information about the current location:
+
+```ts
+// Route location for the following URL: https://firebeast.dev/tutorials/firebase-react-quick-start/chapters/firestore-queries?ref=twitter#recap
+{
+  // The route name
+  name: 'tutorial-chapter',
+  // The location params
+  params: {
+    tutorialSlug: 'firebase-react-quick-start',
+    chapterSlug: 'firestore-queries'
+  },
+  // The parsed query
+  query: { ref: 'twitter' },
+  // The hash
+  hash: 'recap',
+  // The route meta information (copied from the route definition; in this case undefined)
+  meta: undefined
+}
+```
+
+If the current URL doesn't match to any routes:
+
+```ts
+{
+  name: '404',
+  params: undefined,
+  query: {},
+  hash: '',
+  meta: undefined
+}
+```
 
 ##### `navigate`
 
