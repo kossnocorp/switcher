@@ -500,7 +500,23 @@ export default function PostsList({ posts }: { posts: Post[] }) {
 
 #### `resolveLocation`
 
-TODO
+The function accepts URL string and returns a location object:
+
+```ts
+resolveLocation(
+  'https://firebeast.dev/tutorials/firebase-react-quick-start/chapters/firestore-queries?ref=twitter#recap'
+)
+//=> {
+//=>   name: 'tutorial-chapter',
+//=>   params: {
+//=>     tutorialSlug: 'firebase-react-quick-start',
+//=>     chapterSlug: 'firestore-queries'
+//=>   },
+//=>   query: { ref: 'twitter' },
+//=>   hash: 'recap',
+//=>   meta: undefined
+//=> }
+```
 
 #### `refToLocation`
 
