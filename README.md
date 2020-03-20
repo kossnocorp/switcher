@@ -341,7 +341,7 @@ The function builds href to the given route reference:
 buildHref({ name: 'home' })
 //=> "/"
 
-navigate({
+buildHref({
   name: 'tutorial-chapter',
   params: {
     tutorialSlug: 'firebase-react-quick-start',
@@ -520,11 +520,49 @@ resolveLocation(
 
 #### `refToLocation`
 
-TODO
+The function accepts a reference object and returns corresponding location object:
+
+```ts
+refToLocation({
+  name: 'tutorial-chapter',
+  params: {
+    tutorialSlug: 'firebase-react-quick-start',
+    chapterSlug: 'firestore-queries'
+  },
+  query: { ref: 'twitter' },
+  hash: 'recap'
+})
+//=> {
+//=>   name: 'tutorial-chapter',
+//=>   params: {
+//=>     tutorialSlug: 'firebase-react-quick-start',
+//=>     chapterSlug: 'firestore-queries'
+//=>   },
+//=>   query: { ref: 'twitter' },
+//=>   hash: 'recap',
+//=>   meta: undefined
+//=> }
+```
 
 #### `buildHref`
 
-TODO
+The function builds href to the given route reference:
+
+```ts
+buildHref({ name: 'home' })
+//=> "/"
+
+buildHref({
+  name: 'tutorial-chapter',
+  params: {
+    tutorialSlug: 'firebase-react-quick-start',
+    chapterSlug: 'firestore-queries'
+  },
+  query: { ref: 'twitter' },
+  hash: 'recap'
+})
+//=> "/tutorials/firebase-react-quick-start/chapters/firestore-queries?ref=twitter#recap"
+```
 
 ## Changelog
 
