@@ -130,7 +130,7 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
       const { meta } = route
       return {
         name,
-        query,
+        query: query || {},
         params,
         hash,
         meta
