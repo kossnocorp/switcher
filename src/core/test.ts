@@ -4,22 +4,22 @@ import { createRouterCore, route } from '.'
 describe('core', () => {
   describe('route', () => {
     it('allows adding meta data', () => {
-      const result = route('home')('/')()
-      assert.deepEqual(result, {
-        name: 'home',
-        path: '/',
-        meta: {}
-      })
+      const result = route('home', () => '/')
+      assert(result.name === 'home')
+      assert(result.path(undefined) === '/')
+      assert.deepEqual(result.meta, {})
     })
   })
 
   describe('createRouterCore', () => {
     const routes = [
-      route('home')('/')(),
+      route('home', () => '/'),
 
-      route('project')<{ projectId: string }>('/projects/:projectId')({
-        auth: true
-      })
+      route(
+        'project',
+        (params: { projectId: string }) => `/projects/${params.projectId}`,
+        { auth: true }
+      )
     ]
     const { resolveLocation, refToLocation, buildHref } = createRouterCore(
       routes

@@ -7,10 +7,12 @@ Type-safe TypeScript-first minimalistic router for React & Preact apps.
 - Designed with TypeScript's type inference in mind
 - Universal code (browser & Node.js)
 - Functional API
-- Maximum type-safety
+- Complete type-safety
 - Autocomplete for routes, params and meta information
 - Say goodbye to `any`!
 - Say goodbye to exceptions!
+
+**Please note that the library depends on [Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy), so it works only in [the browsers that support it](https://caniuse.com/#search=proxy) (meaning no IE support)**
 
 ## Installation
 
@@ -34,8 +36,6 @@ To start using Switcher you need to add a module to your app, i.e. `router.ts`. 
 
 Here's the router from [Fire Beast blog](https://firebeast.dev/) source code:
 
-> Note that even though the triple call `route('home')('/')()` looks alien, it allows TypeScript to infer dictionary of route names (`home`, `tutorials`, etc.), optional meta information and let you specify the params type.
-
 ```ts
 // When using with React:
 import { createRouter, InferRouteRef, route } from '@switcher/react'
@@ -43,18 +43,23 @@ import { createRouter, InferRouteRef, route } from '@switcher/react'
 import { createRouter, InferRouteRef, route } from '@switcher/preact'
 
 // Routes
+
 export const appRoutes = [
-  route('home')('/')(),
+  route('home', '/'),
 
-  route('tutorial')<{ slug: string }>('/tutorials/:slug')(),
+  route('tutorial', (params: { slug: string }) => `/tutorials/${params.slug}`),
 
-  route('tutorial-chapter')<{ tutorialSlug: string; chapterSlug: string }>(
-    '/tutorials/:tutorialSlug/chapters/:chapterSlug'
-  )(),
+  route(
+    'tutorial-chapter',
+    (params: { tutorialSlug: string; chapterSlug: string }) =>
+      `/tutorials/${params.tutorialSlug}/chapters/${params.chapterSlug}`
+  ),
 
-  route('post')<{ categoryId: string; postId: string }>(
-    '/:categoryId/:postId'
-  )()
+  route(
+    'post',
+    (params: { categoryId: string; postId: string }) =>
+      `/${params.categoryId}/${params.postId}`
+  )
 ]
 
 // Routing methods
@@ -187,23 +192,25 @@ import { route } from '@switcher/react'
 // Or Preact:
 import { route } from '@switcher/preact'
 
-route('home')('/')()
+route('home', '/')
 ```
 
 To define a route with params:
 
 ```ts
-route('tutorial-chapter')<{ tutorialSlug: string; chapterSlug: string }>(
-  '/tutorials/:tutorialSlug/chapters/:chapterSlug'
-)()
+route(
+  'tutorial-chapter',
+  (params: { tutorialSlug: string; chapterSlug: string }) =>
+    `/tutorials/${params.tutorialSlug}/chapters/${params.chapterSlug}`
+)
 ```
 
 The `route` also allows to pass meta information:
 
 ```ts
 const routes = [
-  route('login')('/login')({ auth: false }),
-  route('projects')('/projects')({ auth: true })
+  route('login', '/login', { auth: false }),
+  route('projects', '/projects', { auth: true })
 ]
 ```
 
@@ -218,8 +225,8 @@ import { route, createRouter } from '@switcher/react'
 import { route, createRouter } from '@switcher/preact'
 
 const routes = [
-  route('login')('/login')({ auth: false }),
-  route('projects')('/projects')({ auth: true })
+  route('login', '/login', { auth: false }),
+  route('projects', '/projects', { auth: true })
 ]
 
 const routerAPI = createRouter(routes, {

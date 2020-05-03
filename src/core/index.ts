@@ -1,6 +1,6 @@
-export type Route<RouteName, _RouteParams, RouteMeta> = {
+export type Route<RouteName, RouteParams, RouteMeta> = {
   name: RouteName
-  path: string
+  path: (params: RouteParams) => string
   meta: RouteMeta
 }
 
@@ -68,15 +68,17 @@ export const notFoundLocation: RouteNotFoundLocation<{}> = {
   meta: {}
 }
 
-export function route<RouteName extends string>(name: RouteName) {
-  return <RouteParams = undefined>(path: string) => <RouteMeta = {}>(
-    meta?: RouteMeta
-  ) =>
-    ({ name, path, meta: meta || {} } as Route<
-      RouteName,
-      RouteParams,
-      RouteMeta
-    >)
+export function route<RouteName extends string, Path, RouteMeta = {}>(
+  name: RouteName,
+  path: Path,
+  meta?: RouteMeta
+): Path extends () => string
+  ? Route<RouteName, undefined, RouteMeta>
+  : Path extends (params: infer RouteParams) => string
+  ? Route<RouteName, RouteParams, RouteMeta>
+  : never {
+  // @ts-ignore: I've not idea how to make it happy ¯\_(ツ)_/¯
+  return { name, path, meta: meta || {} }
 }
 
 export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
@@ -98,11 +100,11 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
     for (let index = 0; index < appRoutes.length; index++) {
       const route = appRoutes[index]
       const { name, path, meta } = route
-      const regExp = pathToRegExp(path)
+      const regExp = pathToRegExp(pathToMatchString(path))
       const captures = pathname.match(regExp)
 
       if (captures) {
-        const params = parseParams(path, captures.slice(1))
+        const params = parseParams(pathToMatchString(path), captures.slice(1))
         return {
           name,
           query,
@@ -152,7 +154,7 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
     const { path } = route
 
     let href = params
-      ? path.replace(/:([^/]+)/g, (_, param) => {
+      ? pathToMatchString(path).replace(/:([^/]+)/g, (_, param) => {
           if (!(param in params)) {
             throw new Error(
               `Can't generate the path for ${name} route: ${param} param is missing in the passed params (${JSON.stringify(
@@ -162,7 +164,7 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
           }
           return params[param].toString()
         })
-      : path
+      : path(undefined)
 
     const notEmpty = query && Object.keys(query).length > 0
     if (query && notEmpty) {
@@ -215,4 +217,10 @@ function parseSearchParamValue(value: string) {
   } else {
     return value
   }
+}
+
+const paramsProxy = new Proxy({}, { get: (_, prop) => `:${prop.toString()}` })
+
+function pathToMatchString(path: (params: any) => string) {
+  return path(paramsProxy)
 }

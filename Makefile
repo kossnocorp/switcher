@@ -28,7 +28,8 @@ publish: build
 	cd lib/preact && npm publish --access public
 
 publish-next: build
-	cd lib && npm publish --access public --tag next
+	cd lib/react && npm publish --access public --tag next
+	cd lib/preact && npm publish --access public --tag next
 
 docs:
 	@${BIN}/typedoc --theme minimal --name Switcher
