@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-export type ComponentChildren = ReactNode[]
+export type ComponentChildren = ReactNode
 export {
   cloneElement,
   createContext,
