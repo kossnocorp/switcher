@@ -68,7 +68,11 @@ export const notFoundLocation: RouteNotFoundLocation<{}> = {
   meta: {}
 }
 
-export function route<RouteName extends string, Path, RouteMeta = {}>(
+export function route<
+  RouteName extends string,
+  Path extends Function,
+  RouteMeta = {}
+>(
   name: RouteName,
   path: Path,
   meta?: RouteMeta

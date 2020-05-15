@@ -45,7 +45,7 @@ import { createRouter, InferRouteRef, route } from '@switcher/preact'
 // Routes
 
 export const appRoutes = [
-  route('home', '/'),
+  route('home', () => '/'),
 
   route('tutorial', (params: { slug: string }) => `/tutorials/${params.slug}`),
 
