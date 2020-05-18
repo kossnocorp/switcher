@@ -6,14 +6,16 @@ describe('core', () => {
     it('allows adding meta data', () => {
       const result = route('home', () => '/')
       assert(result.name === 'home')
-      assert(result.path(undefined) === '/')
+      assert(
+        typeof result.path === 'function' && result.path(undefined) === '/'
+      )
       assert.deepEqual(result.meta, {})
     })
   })
 
   describe('createRouterCore', () => {
     const routes = [
-      route('home', () => '/'),
+      route('home', '/'),
 
       route(
         'project',
@@ -36,6 +38,17 @@ describe('core', () => {
           query: { qwe: 'rty', asd: true, zxc: 123 },
           hash: '456',
           meta: { auth: true }
+        })
+      })
+
+      it('resolves location defined by route with string path', () => {
+        const location = resolveLocation('http://localhost:3000/')
+        assert.deepEqual(location, {
+          name: 'home',
+          params: undefined,
+          query: {},
+          hash: '',
+          meta: {}
         })
       })
     })

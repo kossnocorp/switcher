@@ -1,6 +1,6 @@
 export type Route<RouteName, RouteParams, RouteMeta> = {
   name: RouteName
-  path: (params: RouteParams) => string
+  path: ((params: RouteParams) => string) | string
   meta: RouteMeta
 }
 
@@ -70,13 +70,13 @@ export const notFoundLocation: RouteNotFoundLocation<{}> = {
 
 export function route<
   RouteName extends string,
-  Path extends () => string,
+  Path extends ((params: object) => string) | string,
   RouteMeta = {}
 >(
   name: RouteName,
   path: Path,
   meta?: RouteMeta
-): Path extends () => string
+): Path extends (() => string) | string
   ? Route<RouteName, undefined, RouteMeta>
   : Path extends (params: infer RouteParams) => string
   ? Route<RouteName, RouteParams, RouteMeta>
@@ -168,6 +168,8 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
           }
           return params[param].toString()
         })
+      : typeof path === 'string'
+      ? path
       : path(undefined)
 
     const notEmpty = query && Object.keys(query).length > 0
@@ -225,6 +227,6 @@ function parseSearchParamValue(value: string) {
 
 const paramsProxy = new Proxy({}, { get: (_, prop) => `:${prop.toString()}` })
 
-function pathToMatchString(path: (params: any) => string) {
-  return path(paramsProxy)
+function pathToMatchString(path: ((params: any) => string) | string) {
+  return typeof path === 'string' ? path : path(paramsProxy)
 }
