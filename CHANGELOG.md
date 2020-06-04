@@ -7,6 +7,12 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## 1.1.1 - 2020-06-04
+
+### Fixed
+
+- Fix `route`'s path argument type definition
+
 ## 1.1.0 - 2020-05-18
 
 ### Added

@@ -70,7 +70,7 @@ export const notFoundLocation: RouteNotFoundLocation<{}> = {
 
 export function route<
   RouteName extends string,
-  Path extends ((params: object) => string) | string,
+  Path extends ((params: { [key: string]: any }) => string) | string,
   RouteMeta = {}
 >(
   name: RouteName,
