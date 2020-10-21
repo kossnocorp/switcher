@@ -33,6 +33,12 @@ This change log follows the format documented in [Keep a CHANGELOG].
 
 - Add `redirect` function to the router that automatically sets `redirected: true` to the `landing` property.
 
+## 1.1.3 - 2020-10-21
+
+### Fixed
+
+- Make hash always present in the location
+
 ## 1.1.2 - 2020-06-04
 
 ### Fixed

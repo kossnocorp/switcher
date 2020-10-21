@@ -84,6 +84,20 @@ describe('core', () => {
           meta: { auth: true }
         })
       })
+
+      it('sets empty hash if it is not present in the ref', () => {
+        const location = refToLocation({
+          name: 'project',
+          params: { projectId: 'qwe' }
+        })
+        assert.deepEqual(location, {
+          name: 'project',
+          params: { projectId: 'qwe' },
+          query: {},
+          hash: '',
+          meta: { auth: true }
+        })
+      })
     })
 
     describe('buildHref', () => {
