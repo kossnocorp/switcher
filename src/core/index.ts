@@ -4,6 +4,13 @@ export type Route<RouteName, RouteParams, RouteMeta> = {
   meta: RouteMeta
 }
 
+export type LandingProps = {
+  redirected?: boolean
+  // TODO: Add more props, also find better names:
+  // back?: boolean
+  // forward?: boolean
+}
+
 export type RouteLocation<
   LocationRoute,
   LocationMeta
@@ -18,6 +25,7 @@ export type RouteLocation<
       query: RouteQuery
       hash: string
       meta: LocationMeta
+      landing: LandingProps
     }
   : never
 
@@ -65,7 +73,8 @@ export const notFoundLocation: RouteNotFoundLocation<{}> = {
   params: undefined,
   query: {},
   hash: '',
-  meta: {}
+  meta: {},
+  landing: {}
 }
 
 export function route<
@@ -114,7 +123,8 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
           query,
           params,
           hash,
-          meta
+          meta,
+          landing: {}
         } as AppLocation
       }
     }
@@ -124,11 +134,15 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
       params: undefined,
       query,
       hash,
-      meta: {}
+      meta: {},
+      landing: {}
     } as AppLocation
   }
 
-  function refToLocation(ref: RouteRef<AppRoute>): AppLocation {
+  function refToLocation(
+    ref: RouteRef<AppRoute>,
+    landing: LandingProps = {}
+  ): AppLocation {
     const { name, params, query, hash } = ref
     const route = appRoutes.find(route => route.name === name)
 
@@ -139,7 +153,8 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
         query: query || {},
         params,
         hash,
-        meta
+        meta,
+        landing
       } as AppLocation
     } else {
       return notFoundLocation

@@ -20,13 +20,15 @@ export function createRouter<
   type AppRef = core.RouteRef<AppRoute>
   type Router = {
     location: AppLocation
-    navigate: (ref: AppRef) => void
+    navigate: (ref: AppRef, landing?: core.LandingProps) => void
+    redirect: (ref: AppRef) => void
     buildHref: (ref: AppRef) => string
   }
 
   const RouterContext = adaptor.createContext<Router>({
     location: core.notFoundLocation,
     navigate: () => void 0,
+    redirect: () => void 0,
     buildHref: () => ''
   })
 
@@ -72,9 +74,9 @@ export function createRouter<
       prevLocation.current = location
     }, [location])
 
-    function navigate(ref: AppRef) {
+    function navigate(ref: AppRef, landing?: core.LandingProps) {
       const currentLocation = resolveLocation(window.location.href)
-      const newLocation = refToLocation(ref)
+      const newLocation = refToLocation(ref, landing)
 
       if (isSamePage(currentLocation, ref)) {
         // If the hash is present and the object with given id is found
@@ -88,7 +90,11 @@ export function createRouter<
       }
     }
 
-    return { location, navigate, buildHref }
+    function redirect(ref: AppRef) {
+      navigate(ref, { redirected: true })
+    }
+
+    return { location, navigate, redirect, buildHref }
   }
 
   function RouterLink<

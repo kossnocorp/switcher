@@ -303,8 +303,10 @@ An object with the information about the current location:
   query: { ref: 'twitter' },
   // The hash
   hash: 'recap',
-  // The route meta information (copied from the route definition; in this case undefined)
-  meta: undefined
+  // The route meta information (copied from the route definition; in this case empty)
+  meta: {},
+  // The landing information; it tells how the app gets landed at the location
+  landing: { redirected: true }
 }
 ```
 
@@ -330,6 +332,26 @@ navigate({ name: 'home' })
 
 // Navigate to route with params, query and hash
 navigate({
+  name: 'tutorial-chapter',
+  params: {
+    tutorialSlug: 'firebase-react-quick-start',
+    chapterSlug: 'firestore-queries'
+  },
+  query: { ref: 'twitter' },
+  hash: 'recap'
+})
+```
+
+##### `redirect` (component-level API)
+
+The function performs navigation to the given route reference and sets `redirected` to the `landing` property of the location.
+
+```ts
+// Redirect to the home route
+redirect({ name: 'home' })
+
+// Redirect to route with params, query and hash
+redirect({
   name: 'tutorial-chapter',
   params: {
     tutorialSlug: 'firebase-react-quick-start',
