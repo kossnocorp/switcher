@@ -7,6 +7,12 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## 1.2.1 - 2021-01-06
+
+### Fixed
+
+- Fix `hash` being `undefined`.
+
 ## 1.2.0 - 2021-01-06
 
 ### Added

@@ -119,13 +119,14 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
       if (captures) {
         const params = parseParams(pathToMatchString(path), captures.slice(1))
         return {
+          // @ts-ignore
           name,
           query,
           params,
           hash,
           meta,
           landing: {}
-        } as AppLocation
+        }
       }
     }
 
@@ -136,7 +137,7 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
       hash,
       meta: {},
       landing: {}
-    } as AppLocation
+    }
   }
 
   function refToLocation(
@@ -152,10 +153,10 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
         name,
         query: query || {},
         params,
-        hash,
+        hash: hash || '',
         meta,
         landing
-      } as AppLocation
+      }
     } else {
       return notFoundLocation
     }
