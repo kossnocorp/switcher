@@ -32,6 +32,9 @@ export function createRouter<
     buildHref: () => ''
   })
 
+  // Initial values
+  let historyIndex = 0
+
   function useRouter(initialURL: string): Router {
     const initialLocation = resolveLocation(initialURL)
     const [location, setLocation] = adaptor.useState(initialLocation)
@@ -39,9 +42,26 @@ export function createRouter<
     adaptor.useEffect(() => {
       // Are we in the browser environment?
       if (typeof window !== 'undefined') {
-        const popStateListener = () => {
-          const newLocation = resolveLocation(window.location.href)
-          setLocation(newLocation)
+        let negateEvent = false
+        const popStateListener = (e: PopStateEvent) => {
+          if (negateEvent) {
+            negateEvent = false
+            return
+          }
+          const popIndex = e.state?.index === 'number' ? e.state.index : 0
+          const delta = popIndex < historyIndex ? -1 : 1
+          historyIndex = popIndex
+
+          confirmUnload(
+            () => {
+              const newLocation = resolveLocation(window.location.href)
+              setLocation(newLocation)
+            },
+            () => {
+              negateEvent = true
+              history.go(-delta)
+            }
+          )
         }
 
         window.addEventListener('popstate', popStateListener)
@@ -78,16 +98,19 @@ export function createRouter<
       const currentLocation = resolveLocation(window.location.href)
       const newLocation = refToLocation(ref, landing)
 
-      if (isSamePage(currentLocation, ref)) {
-        // If the hash is present and the object with given id is found
-        // then scroll to it
-        const scrollToEl = ref.hash && document.getElementById(ref.hash)
-        if (scrollToEl) window.scroll(0, scrollToEl.offsetTop)
-      } else {
-        // Push state to history
-        window.history.pushState(null, '', buildHref(ref))
-        setLocation(newLocation)
-      }
+      confirmUnload(() => {
+        if (isSamePage(currentLocation, ref)) {
+          // If the hash is present and the object with given id is found
+          // then scroll to it
+          const scrollToEl = ref.hash && document.getElementById(ref.hash)
+          if (scrollToEl) window.scroll(0, scrollToEl.offsetTop)
+        } else {
+          // Push state to history
+          historyIndex++
+          window.history.pushState({ index: historyIndex }, '', buildHref(ref))
+          setLocation(newLocation)
+        }
+      })
     }
 
     function redirect(ref: AppRef) {
@@ -199,5 +222,36 @@ function isEqual(objA: any, objB: any): boolean {
     return objAKeys.every(key => isEqual(objA[key], objB[key]))
   } else {
     return objA === objB
+  }
+}
+
+function confirmUnload(
+  confirmCallback: () => void,
+  cancelCallback?: () => void
+) {
+  const unloadEvent: BeforeUnloadEvent = new BeforeUnloadEventPhony()
+
+  const listener = (e: BeforeUnloadEvent) => {
+    if (!e.returnValue || confirm(e.returnValue)) confirmCallback()
+    else cancelCallback?.()
+    window.removeEventListener('beforeunload', listener)
+  }
+
+  window.addEventListener('beforeunload', listener)
+  window.dispatchEvent(unloadEvent)
+}
+
+class BeforeUnloadEventPhony extends Event {
+  _returnValue: any
+
+  constructor() {
+    super('beforeunload')
+  }
+
+  get returnValue() {
+    return this._returnValue
+  }
+  set returnValue(value: any) {
+    this._returnValue = value
   }
 }
