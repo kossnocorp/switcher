@@ -7,6 +7,12 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## 1.3.1 - 2021-02-12
+
+### Fixed
+
+- Made it work in the Node.js environment.
+
 ## 1.3.0 - 2021-02-12
 
 ### Added

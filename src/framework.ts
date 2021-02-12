@@ -229,6 +229,21 @@ function confirmUnload(
   confirmCallback: () => void,
   cancelCallback?: () => void
 ) {
+  class BeforeUnloadEventPhony extends Event {
+    _returnValue: any
+
+    constructor() {
+      super('beforeunload')
+    }
+
+    get returnValue() {
+      return this._returnValue
+    }
+    set returnValue(value: any) {
+      this._returnValue = value
+    }
+  }
+
   const unloadEvent: BeforeUnloadEvent = new BeforeUnloadEventPhony()
 
   const listener = (e: BeforeUnloadEvent) => {
@@ -239,19 +254,4 @@ function confirmUnload(
 
   window.addEventListener('beforeunload', listener)
   window.dispatchEvent(unloadEvent)
-}
-
-class BeforeUnloadEventPhony extends Event {
-  _returnValue: any
-
-  constructor() {
-    super('beforeunload')
-  }
-
-  get returnValue() {
-    return this._returnValue
-  }
-  set returnValue(value: any) {
-    this._returnValue = value
-  }
 }
