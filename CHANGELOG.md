@@ -7,6 +7,18 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## 2.0.0 - 2021-02-22
+
+### Changed
+
+- **BREAKING**: Stopped triggering `beforeunload` when redirecting, unless `unloading: true` is present in the `landing` argument.
+
+## Added
+
+- Added `unloading` property (defaults to `true`) to the `landing` argument.
+
+- Added ability to pass `landing` argument to `redirect` function.
+
 ## 1.3.2 - 2021-02-22
 
 ### Fixed
@@ -29,34 +41,34 @@ This change log follows the format documented in [Keep a CHANGELOG].
 
 ### Fixed
 
-- Fix `hash` being `undefined`.
+- Fixed `hash` being `undefined`.
 
 ## 1.2.0 - 2021-01-06
 
 ### Added
 
-- Add `landing` property to the location type contains information on how the app gets landed at the location, such as `redirected.
+- Added `landing` property to the location type that contains information on how the app gets landed at the location, such as `redirected`.
 
-- Add `redirect` function to the router that automatically sets `redirected: true` to the `landing` property.
+- Added `redirect` function to the router that automatically sets `redirected: true` to the `landing` argument.
 
 ## 1.1.3 - 2020-10-21
 
 ### Fixed
 
-- Make hash always present in the location
+- Made hash always present in the location
 
 ## 1.1.2 - 2020-06-04
 
 ### Fixed
 
-- Fix `route`'s path argument type definition
+- Fixed `route`'s path argument type definition
 
 ## 1.1.0 - 2020-05-18
 
 ### Added
 
-- Make `route` accept string
-- Make `Path` generic in `route` more specific, so it would warn if you the path is of a wrong type
+- Made `route` accept string
+- Made `Path` generic in `route` more specific, so it would warn if you the path is of a wrong type
 
 ## 1.0.0 - 2020-05-03
 

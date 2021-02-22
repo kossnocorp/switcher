@@ -53,6 +53,7 @@ export function createRouter<
           historyIndex = popIndex
 
           confirmUnload(
+            true,
             () => {
               const newLocation = resolveLocation(window.location.href)
               setLocation(newLocation)
@@ -94,11 +95,15 @@ export function createRouter<
       prevLocation.current = location
     }, [location])
 
-    function navigate(ref: AppRef, landing?: core.LandingProps) {
+    function navigate(
+      ref: AppRef,
+      { unloading = true, redirected }: core.LandingProps = {}
+    ) {
+      const landing = { unloading, redirected }
       const currentLocation = resolveLocation(window.location.href)
       const newLocation = refToLocation(ref, landing)
 
-      confirmUnload(() => {
+      confirmUnload(!unloading, () => {
         if (isSamePage(currentLocation, ref)) {
           // If the hash is present and the object with given id is found
           // then scroll to it
@@ -113,8 +118,11 @@ export function createRouter<
       })
     }
 
-    function redirect(ref: AppRef) {
-      navigate(ref, { redirected: true })
+    function redirect(
+      ref: AppRef,
+      landing?: Omit<core.LandingProps, 'redirected'>
+    ) {
+      navigate(ref, { unloading: false, ...landing, redirected: true })
     }
 
     return { location, navigate, redirect, buildHref }
@@ -226,32 +234,37 @@ function isEqual(objA: any, objB: any): boolean {
 }
 
 function confirmUnload(
+  force: boolean,
   confirmCallback: () => void,
   cancelCallback?: () => void
 ) {
-  class BeforeUnloadEventPhony extends Event {
-    _returnValue: any
+  if (force) {
+    confirmCallback()
+  } else {
+    class BeforeUnloadEventPhony extends Event {
+      _returnValue: any
 
-    constructor() {
-      super('beforeunload')
+      constructor() {
+        super('beforeunload')
+      }
+
+      get returnValue() {
+        return this._returnValue
+      }
+      set returnValue(value: any) {
+        this._returnValue = value
+      }
     }
 
-    get returnValue() {
-      return this._returnValue
+    const unloadEvent: BeforeUnloadEvent = new BeforeUnloadEventPhony()
+
+    const listener = (e: BeforeUnloadEvent) => {
+      if (!e.returnValue || confirm(e.returnValue)) confirmCallback()
+      else cancelCallback?.()
+      window.removeEventListener('beforeunload', listener)
     }
-    set returnValue(value: any) {
-      this._returnValue = value
-    }
+
+    window.addEventListener('beforeunload', listener)
+    window.dispatchEvent(unloadEvent)
   }
-
-  const unloadEvent: BeforeUnloadEvent = new BeforeUnloadEventPhony()
-
-  const listener = (e: BeforeUnloadEvent) => {
-    if (!e.returnValue || confirm(e.returnValue)) confirmCallback()
-    else cancelCallback?.()
-    window.removeEventListener('beforeunload', listener)
-  }
-
-  window.addEventListener('beforeunload', listener)
-  window.dispatchEvent(unloadEvent)
 }

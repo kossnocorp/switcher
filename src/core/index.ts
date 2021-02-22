@@ -6,6 +6,7 @@ export type Route<RouteName, RouteParams, RouteMeta> = {
 
 export type LandingProps = {
   redirected?: boolean
+  unloading?: boolean
   // TODO: Add more props, also find better names:
   // back?: boolean
   // forward?: boolean
