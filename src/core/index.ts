@@ -209,7 +209,7 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
 function pathToRegExp(path: string) {
   return new RegExp(`^${path.replace(/(:[^/]+)/g, '([^/]*)')}/?$`)
 }
-tq
+
 function parseParams(path: string, values: string[]) {
   const segmentNameCaptures = path.match(/:([^/]+)/g)
 
