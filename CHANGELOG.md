@@ -7,6 +7,12 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## 1.3.2 - 2021-02-22
+
+### Fixed
+
+- Applied changes made in v1.2.1 but accidentally canceled by v1.3.0.
+
 ## 1.3.1 - 2021-02-12
 
 ### Fixed
