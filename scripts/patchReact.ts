@@ -22,13 +22,13 @@ readFile(packageJSONPath, 'utf8')
   })
 
 type PackageJSON = {
-  peerDependencies: { [key: string]: string }
+  dependencies: { [key: string]: string }
   [key: string]: any
 }
 
 function patchPackageJSON(packageJSON: PackageJSON): PackageJSON {
   return Object.assign({}, packageJSON, {
-    peerDependencies: Object.assign({}, packageJSON.peerDependencies, {
+    dependencies: Object.assign({}, packageJSON.dependencies, {
       react: '*'
     })
   })

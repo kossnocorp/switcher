@@ -25,7 +25,7 @@ type PackageJSON = {
   name: string
   description: string
   keywords: string[]
-  peerDependencies: { [key: string]: string }
+  dependencies: { [key: string]: string }
   [key: string]: any
 }
 
@@ -36,7 +36,7 @@ function patchPackageJSON(packageJSON: PackageJSON): PackageJSON {
       (acc, keyword) => acc.concat(keyword.replace('React', 'Preact')),
       [] as string[]
     ),
-    peerDependencies: Object.assign({}, packageJSON.peerDependencies, {
+    dependencies: Object.assign({}, packageJSON.dependencies, {
       preact: '*'
     })
   })

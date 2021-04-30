@@ -7,6 +7,12 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## 2.1.0 - 2021-04-30
+
+### Changed
+
+- Moved `react` and `preact` from peer to regular dependencies.
+
 ## 2.0.0 - 2021-02-22
 
 ### Changed
