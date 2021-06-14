@@ -21,7 +21,10 @@ export function createRouter<
   type Router = {
     location: AppLocation
     navigate: (ref: AppRef, landing?: core.LandingProps) => void
-    redirect: (ref: AppRef) => void
+    redirect: (
+      ref: AppRef,
+      landing?: Omit<core.LandingProps, 'redirected'>
+    ) => void
     buildHref: (ref: AppRef) => string
   }
 
@@ -97,7 +100,7 @@ export function createRouter<
 
     function navigate(
       ref: AppRef,
-      { unloading = true, redirected }: core.LandingProps = {}
+      { unloading = true, redirected, replaced }: core.LandingProps = {}
     ) {
       const landing = { unloading, redirected }
       const currentLocation = resolveLocation(window.location.href)
@@ -109,8 +112,16 @@ export function createRouter<
           // then scroll to it
           const scrollToEl = ref.hash && document.getElementById(ref.hash)
           if (scrollToEl) window.scroll(0, scrollToEl.offsetTop)
+        } else if (replaced) {
+          // Replace the state in the history
+          window.history.replaceState(
+            { index: historyIndex },
+            '',
+            buildHref(ref)
+          )
+          setLocation(newLocation)
         } else {
-          // Push state to history
+          // Push the state to the history
           historyIndex++
           window.history.pushState({ index: historyIndex }, '', buildHref(ref))
           setLocation(newLocation)

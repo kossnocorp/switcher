@@ -7,6 +7,14 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## 2.2.0 - 2021-06-14
+
+### Added
+
+- Added `replaced` property to the `landing` argument to indicate that the state must be replaced istead of pushed.
+
+- Added ability to pass `landing` argument to `redirect` function.
+
 ## 2.1.0 - 2021-04-30
 
 ### Changed
