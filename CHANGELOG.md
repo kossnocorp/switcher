@@ -7,6 +7,12 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## 2.2.1 - 2021-09-13
+
+### Fixed
+
+- Fixed how the element top is calculated when scrolling to it by setting hash.
+
 ## 2.2.0 - 2021-06-14
 
 ### Added

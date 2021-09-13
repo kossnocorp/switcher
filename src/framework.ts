@@ -84,7 +84,7 @@ export function createRouter<
         if (scrollToEl) {
           // If there's hash and element with id equal hash is found
           // then scroll to it.
-          window.scroll(0, scrollToEl.offsetTop)
+          window.scroll(0, elementTop(scrollToEl))
         } else if (
           // If it's not the same page..
           !isSamePage(location, prevLocation.current) ||
@@ -111,7 +111,7 @@ export function createRouter<
           // If the hash is present and the object with given id is found
           // then scroll to it
           const scrollToEl = ref.hash && document.getElementById(ref.hash)
-          if (scrollToEl) window.scroll(0, scrollToEl.offsetTop)
+          if (scrollToEl) window.scroll(0, elementTop(scrollToEl))
         } else if (replaced) {
           // Replace the state in the history
           window.history.replaceState(
@@ -230,6 +230,10 @@ export function createRouter<
     refToLocation,
     buildHref
   }
+}
+
+function elementTop(element: HTMLElement) {
+  return window.scrollY + element.getBoundingClientRect().y
 }
 
 function isEqual(objA: any, objB: any): boolean {
