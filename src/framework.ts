@@ -1,7 +1,7 @@
 import * as adaptor from './adaptor'
 import * as core from './core'
 
-export type RouterOptions = {
+export interface RouterOptions {
   scrollOnMissingHash?: 'top' | 'preserve'
 }
 
@@ -108,6 +108,10 @@ export function createRouter<
 
       confirmUnload(!unloading, () => {
         if (isSamePage(currentLocation, ref)) {
+          // Update hash if changed
+          if (currentLocation.hash !== ref.hash)
+            window.location.hash = ref.hash || ''
+
           // If the hash is present and the object with given id is found
           // then scroll to it
           const scrollToEl = ref.hash && document.getElementById(ref.hash)

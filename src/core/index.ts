@@ -1,10 +1,10 @@
-export type Route<RouteName, RouteParams, RouteMeta> = {
+export interface Route<RouteName, RouteParams, RouteMeta> {
   name: RouteName
   path: ((params: RouteParams) => string) | string
   meta: RouteMeta
 }
 
-export type LandingProps = {
+export interface LandingProps {
   redirected?: boolean
   unloading?: boolean
   replaced?: boolean
@@ -36,11 +36,11 @@ export type RouteNotFoundLocation<NotFoundMeta> = RouteLocation<
   NotFoundMeta
 >
 
-export type RouteQuery = {
+export interface RouteQuery {
   [key: string]: string | boolean | number
 }
 
-export type RouteParams = {
+export interface RouteParams {
   [key: string]: string
 }
 
