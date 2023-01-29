@@ -1,4 +1,3 @@
-import assert from 'assert'
 import { createRouterCore, route } from '.'
 
 describe('core', () => {
@@ -20,21 +19,23 @@ describe('core', () => {
         const location = resolveLocation(
           'http://localhost:3000/projects/qwe?qwe=rty&asd=true&zxc=123#456'
         )
-        assert.deepEqual(location, {
+        expect(location).toEqual({
           name: 'project',
           params: { projectId: 'qwe' },
           query: { qwe: 'rty', asd: true, zxc: 123 },
-          hash: '456'
+          hash: '456',
+          landing: {}
         })
       })
 
       it('resolves location defined by route with string path', () => {
         const location = resolveLocation('http://localhost:3000/')
-        assert.deepEqual(location, {
+        expect(location).toEqual({
           name: 'home',
           params: undefined,
           query: {},
-          hash: ''
+          hash: '',
+          landing: {}
         })
       })
     })
@@ -47,11 +48,12 @@ describe('core', () => {
           query: { qwe: 'rty', asd: true, zxc: 123 },
           hash: '456'
         })
-        assert.deepEqual(location, {
+        expect(location).toEqual({
           name: 'project',
           params: { projectId: 'qwe' },
           query: { qwe: 'rty', asd: true, zxc: 123 },
-          hash: '456'
+          hash: '456',
+          landing: {}
         })
       })
 
@@ -61,11 +63,12 @@ describe('core', () => {
           params: { projectId: 'qwe' },
           hash: '456'
         })
-        assert.deepEqual(location, {
+        expect(location).toEqual({
           name: 'project',
           params: { projectId: 'qwe' },
           query: {},
-          hash: '456'
+          hash: '456',
+          landing: {}
         })
       })
 
@@ -74,11 +77,12 @@ describe('core', () => {
           name: 'project',
           params: { projectId: 'qwe' }
         })
-        assert.deepEqual(location, {
+        expect(location).toEqual({
           name: 'project',
           params: { projectId: 'qwe' },
           query: {},
-          hash: ''
+          hash: '',
+          landing: {}
         })
       })
     })
@@ -91,7 +95,7 @@ describe('core', () => {
           query: { qwe: 'rty', asd: true, zxc: 123 },
           hash: '456'
         })
-        assert(href === '/projects/qwe?qwe=rty&asd=true&zxc=123#456')
+        expect(href).toEqual('/projects/qwe?qwe=rty&asd=true&zxc=123#456')
       })
     })
   })

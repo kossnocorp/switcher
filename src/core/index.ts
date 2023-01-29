@@ -103,7 +103,7 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any>>>(
 
       if (captures) {
         const params =
-          parseParams(pathToMatchString(path), captures.slice(1)) || {}
+          parseParams(pathToMatchString(path), captures.slice(1)) || undefined
         // @ts-ignore: No idea what's wrong
         return {
           // @ts-ignore
