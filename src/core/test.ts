@@ -2,25 +2,13 @@ import assert from 'assert'
 import { createRouterCore, route } from '.'
 
 describe('core', () => {
-  describe('route', () => {
-    it('allows adding meta data', () => {
-      const result = route('home', () => '/')
-      assert(result.name === 'home')
-      assert(
-        typeof result.path === 'function' && result.path(undefined) === '/'
-      )
-      assert.deepEqual(result.meta, {})
-    })
-  })
-
   describe('createRouterCore', () => {
     const routes = [
       route('home', '/'),
 
       route(
         'project',
-        (params: { projectId: string }) => `/projects/${params.projectId}`,
-        { auth: true }
+        (params: { projectId: string }) => `/projects/${params.projectId}`
       )
     ]
     const { resolveLocation, refToLocation, buildHref } = createRouterCore(
@@ -36,8 +24,7 @@ describe('core', () => {
           name: 'project',
           params: { projectId: 'qwe' },
           query: { qwe: 'rty', asd: true, zxc: 123 },
-          hash: '456',
-          meta: { auth: true }
+          hash: '456'
         })
       })
 
@@ -47,8 +34,7 @@ describe('core', () => {
           name: 'home',
           params: undefined,
           query: {},
-          hash: '',
-          meta: {}
+          hash: ''
         })
       })
     })
@@ -65,8 +51,7 @@ describe('core', () => {
           name: 'project',
           params: { projectId: 'qwe' },
           query: { qwe: 'rty', asd: true, zxc: 123 },
-          hash: '456',
-          meta: { auth: true }
+          hash: '456'
         })
       })
 
@@ -80,8 +65,7 @@ describe('core', () => {
           name: 'project',
           params: { projectId: 'qwe' },
           query: {},
-          hash: '456',
-          meta: { auth: true }
+          hash: '456'
         })
       })
 
@@ -94,8 +78,7 @@ describe('core', () => {
           name: 'project',
           params: { projectId: 'qwe' },
           query: {},
-          hash: '',
-          meta: { auth: true }
+          hash: ''
         })
       })
     })

@@ -1,7 +1,6 @@
-export interface Route<RouteName, RouteParams, RouteMeta> {
+export interface Route<RouteName, RouteParams> {
   name: RouteName
   path: ((params: RouteParams) => string) | string
-  meta: RouteMeta
 }
 
 export interface LandingProps {
@@ -13,28 +12,20 @@ export interface LandingProps {
   // forward?: boolean
 }
 
-export type RouteLocation<
-  LocationRoute,
-  LocationMeta
-> = LocationRoute extends Route<
+export type RouteLocation<LocationRoute> = LocationRoute extends Route<
   infer RouteName,
-  infer RouteParams,
-  infer _RouteMeta
+  infer RouteParams
 >
   ? {
       name: RouteName
       params: RouteParams
       query: RouteQuery
       hash: string
-      meta: LocationMeta
       landing: LandingProps
     }
   : never
 
-export type RouteNotFoundLocation<NotFoundMeta> = RouteLocation<
-  Route<'404', undefined, NotFoundMeta>,
-  NotFoundMeta
->
+export type RouteNotFoundLocation = RouteLocation<Route<'404', undefined>>
 
 export interface RouteQuery {
   [key: string]: string | boolean | number
@@ -46,8 +37,7 @@ export interface RouteParams {
 
 export type RouteRef<LinkRoute> = LinkRoute extends Route<
   infer RouteName,
-  infer RouteParams,
-  infer _RouteMeta
+  infer RouteParams
 >
   ? {
       name: RouteName
@@ -63,48 +53,41 @@ export type InferRoute<Routes> = Routes extends (infer InferredRoute)[]
   : never
 
 export type InferRouteName<Routes> = Routes extends (infer InferredRoute)[]
-  ? InferredRoute extends Route<any, any, any>
+  ? InferredRoute extends Route<any, any>
     ? InferredRoute['name']
     : never
   : never
 
 export type InferRouteRef<Routes> = RouteRef<InferRoute<Routes>>
 
-export const notFoundLocation: RouteNotFoundLocation<{}> = {
+export const notFoundLocation: RouteNotFoundLocation = {
   name: '404',
   params: undefined,
   query: {},
   hash: '',
-  meta: {},
   landing: {}
 }
 
 export function route<
   RouteName extends string,
-  Path extends ((params: any) => string) | string,
-  RouteMeta = {}
+  Path extends ((params: any) => string) | string
 >(
   name: RouteName,
-  path: Path,
-  meta?: RouteMeta
+  path: Path
 ): Path extends (() => string) | string
-  ? Route<RouteName, undefined, RouteMeta>
+  ? Route<RouteName, undefined>
   : Path extends (params: infer RouteParams) => string
-  ? Route<RouteName, RouteParams, RouteMeta>
+  ? Route<RouteName, RouteParams>
   : never {
   // @ts-ignore: I've not idea how to make it happy ¯\_(ツ)_/¯
-  return { name, path, meta: meta || {} }
+  return { name, path }
 }
 
-export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
+export function createRouterCore<AppRoutes extends Array<Route<any, any>>>(
   appRoutes: AppRoutes
 ) {
   type AppRoute = InferRoute<AppRoutes>
-  type AppRouteMeta = AppRoute['meta']
-
-  type AppLocation =
-    | RouteLocation<AppRoute, AppRouteMeta>
-    | RouteNotFoundLocation<AppRouteMeta>
+  type AppLocation = RouteLocation<AppRoute> | RouteNotFoundLocation
 
   function resolveLocation(url: string): AppLocation {
     const { pathname, searchParams, hash: unprocessedHash } = new URL(url)
@@ -114,7 +97,7 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
 
     for (let index = 0; index < appRoutes.length; index++) {
       const route = appRoutes[index]
-      const { name, path, meta } = route
+      const { name, path } = route
       const regExp = pathToRegExp(pathToMatchString(path))
       const captures = pathname.match(regExp)
 
@@ -128,7 +111,6 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
           query,
           params,
           hash,
-          meta,
           landing: {}
         }
       }
@@ -139,7 +121,6 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
       params: undefined,
       query,
       hash,
-      meta: {},
       landing: {}
     }
   }
@@ -152,13 +133,11 @@ export function createRouterCore<AppRoutes extends Array<Route<any, any, any>>>(
     const route = appRoutes.find(route => route.name === name)
 
     if (route) {
-      const { meta } = route
       return {
         name,
         query: query || {},
         params,
         hash: hash || '',
-        meta,
         landing
       }
     } else {

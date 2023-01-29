@@ -8,7 +8,7 @@ Type-safe TypeScript-first minimalistic router for React & Preact apps.
 - Universal code (browser & Node.js)
 - Functional API
 - Complete type-safety
-- Autocomplete for routes, params and meta information
+- Autocomplete for routes and params
 - Say goodbye to `any`!
 - Say goodbye to exceptions!
 
@@ -205,15 +205,6 @@ route(
 )
 ```
 
-The `route` also allows to pass meta information:
-
-```ts
-const routes = [
-  route('login', '/login', { auth: false }),
-  route('projects', '/projects', { auth: true })
-]
-```
-
 ### `createRouter`
 
 The function accepts an array of routes created using `route` and router options and returns the router API with binded types.
@@ -303,8 +294,6 @@ An object with the information about the current location:
   query: { ref: 'twitter' },
   // The hash
   hash: 'recap',
-  // The route meta information (copied from the route definition; in this case empty)
-  meta: {},
   // The landing information; it tells how the app gets landed at the location
   landing: { redirected: true }
 }
@@ -318,7 +307,6 @@ If the current URL doesn't match to any routes:
   params: undefined,
   query: {},
   hash: '',
-  meta: undefined
 }
 ```
 
@@ -542,8 +530,7 @@ resolveLocation(
 //=>     chapterSlug: 'firestore-queries'
 //=>   },
 //=>   query: { ref: 'twitter' },
-//=>   hash: 'recap',
-//=>   meta: undefined
+//=>   hash: 'recap'
 //=> }
 ```
 
@@ -568,8 +555,7 @@ refToLocation({
 //=>     chapterSlug: 'firestore-queries'
 //=>   },
 //=>   query: { ref: 'twitter' },
-//=>   hash: 'recap',
-//=>   meta: undefined
+//=>   hash: 'recap'
 //=> }
 ```
 

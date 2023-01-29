@@ -5,9 +5,10 @@ export interface RouterOptions {
   scrollOnMissingHash?: 'top' | 'preserve'
 }
 
-export function createRouter<
-  AppRoutes extends Array<core.Route<any, any, any>>
->(appRoutes: AppRoutes, options: RouterOptions = {}) {
+export function createRouter<AppRoutes extends Array<core.Route<any, any>>>(
+  appRoutes: AppRoutes,
+  options: RouterOptions = {}
+) {
   // Default options
   options.scrollOnMissingHash = options.scrollOnMissingHash || 'top'
 

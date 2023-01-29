@@ -7,6 +7,10 @@ This change log follows the format documented in [Keep a CHANGELOG].
 [semantic versioning]: http://semver.org/
 [keep a changelog]: http://keepachangelog.com/
 
+## 3.0.0 - ????-??-??
+
+- Removed `meta` to simplify the API. Instead, it's recommended to define meta-information separately and resolve it in a switch statement.
+
 ## 2.2.1 - 2021-09-13
 
 ### Fixed
